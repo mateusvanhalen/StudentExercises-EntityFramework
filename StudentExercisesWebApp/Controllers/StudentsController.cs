@@ -35,9 +35,14 @@ namespace StudentExercisesWebApp.Controllers
                 return NotFound();
             }
 
+
             var student = await _context.Students
                 .Include(s => s.Cohort)
-                .FirstOrDefaultAsync(m => m.StudentId == id);
+                .Include(s => s.StudentExercises)
+                    .ThenInclude(se => se.Exercise)
+                //.Include("StudentExercises.Exercise")
+                .FirstOrDefaultAsync(s => s.StudentId == id);
+
             if (student == null)
             {
                 return NotFound();
@@ -49,7 +54,7 @@ namespace StudentExercisesWebApp.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name");
+            //ViewData["CohortId"] = new SelectList(_context.Cohorts, "CohortId", "Name");
             CreateStudentViewModel model = new CreateStudentViewModel(_context);
             return View(model);
         }
